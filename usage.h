@@ -1,18 +1,22 @@
 #define FPATH  "/home/gareth/usage_reporter/pr"
+#define LOG_PATH "/home/gareth/usage_reporter/status.log"
 
 typedef struct {
 	pid_t id;
 	time_t s_time;
 	time_t e_time;
+	char *name;
 
 
 } pid_obj;
 
-pid_obj start_proc() {
+pid_obj start_proc(char *n) {
 	pid_obj pro;
 	pid_t process = fork();
 	pro.id = process;
 	pro.s_time = time(NULL);
+	pro.name = malloc(strlen(n) * sizeof(char));
+	strcpy(pro.name, n);
 	return pro;
 
 }
@@ -29,8 +33,8 @@ void stop_obj(pid_obj pb) {
 	pb.e_time = time(NULL);
 	// record time
 	FILE *test;
-	test = fopen("/home/gareth/usage_reporter/status", "a+");
-	fprintf(test, "Process %d closed, ran for %d\n", pb.id, pb.e_time - pb.s_time);
+	test = fopen(LOG_PATH, "a+");
+	fprintf(test, "Process %d (%s) closed, ran for %d\n", pb.id, pb.name, pb.e_time - pb.s_time);
 	fclose(test);
 
 

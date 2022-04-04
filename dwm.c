@@ -1413,7 +1413,7 @@ run(void)
 			remove(FPATH);
 			//char **cmd[] = {l, NULL};
 			//spawn(cmd);
-			pid_obj n = start_proc();
+			pid_obj n = start_proc(l);
 			if(n.id == 0) {
 				execvp(l, NULL);
 				exit(0);
@@ -1705,7 +1705,7 @@ spawn(const Arg *arg)
 	if (arg->v == dmenucmd)
 		dmenumon[0] = '0' + selmon->num;
 
-	pid_obj pro = start_proc();
+	pid_obj pro = start_proc(((char **) arg->v)[0]);
 	if (pro.id == 0) {
 		if (dpy) {
 			close(ConnectionNumber(dpy));
@@ -1723,20 +1723,6 @@ spawn(const Arg *arg)
 
 }
 
-void
-dexec(char *n) {
-	pid_obj s = start_proc();
-
-	if(s.id == 0) {
-		//setsid();
-		execv(n, NULL);
-		//exit(0);
-
-	}
-	pid_array[pcounter] = s;
-	pcounter++;
-
-}
 
 void
 tag(const Arg *arg)
