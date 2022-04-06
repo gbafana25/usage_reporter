@@ -1,5 +1,7 @@
 #define FPATH  "/home/gareth/usage_reporter/pr"
 #define LOG_PATH "/home/gareth/usage_reporter/status.log"
+#define CSV_PATH "/home/gareth/usage_reporter/data.csv"
+#define CSIZE 15
 
 typedef struct {
 	pid_t id;
@@ -9,6 +11,18 @@ typedef struct {
 
 
 } pid_obj;
+
+typedef struct {
+	char *name;
+	int time_alive;
+
+} csv_obj;
+
+typedef struct {
+	csv_obj array[CSIZE];
+	int c;
+
+} data_array;
 
 pid_obj start_proc(char *n) {
 	pid_obj pro;
@@ -29,6 +43,33 @@ pid_obj track_existing(int p) {
 
 }
 
+
+
+void append_obj(data_array d, csv_obj o) {
+	d.array[d.c] = o;
+	d.c++;	
+
+
+}
+
+csv_obj create_data_object(char *n, int t) {
+	csv_obj s;
+	s.name = malloc(strlen(n) * sizeof(char));
+	strcpy(s.name, n);
+	s.time_alive = t;
+	return s;
+
+}
+
+void write_to_csv(pid_obj d) {
+	csv_obj r = create_data_object(d.name, d.e_time - d.s_time);
+	FILE *data;
+	data = fopen(CSV_PATH, "a+");
+	fprintf(data, "%s,%d\n", r.name, r.time_alive);
+	fclose(data);
+
+}
+
 void stop_obj(pid_obj pb) {
 	pb.e_time = time(NULL);
 	// record time
@@ -36,6 +77,7 @@ void stop_obj(pid_obj pb) {
 	test = fopen(LOG_PATH, "a+");
 	fprintf(test, "Process %d (%s) closed, ran for %d\n", pb.id, pb.name, pb.e_time - pb.s_time);
 	fclose(test);
+	write_to_csv(pb);
 
 
 

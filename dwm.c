@@ -85,6 +85,10 @@ typedef union {
 pid_obj pid_array[PA_SIZE];
 int pcounter = 0;
 
+csv_obj data[CSIZE];
+//int dcounter = 0;
+
+
 typedef struct {
 	unsigned int click;
 	unsigned int mask;
