@@ -62,7 +62,6 @@
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
 #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
 #define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
-#define PA_SIZE			15
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
@@ -85,8 +84,9 @@ typedef union {
 pid_obj pid_array[PA_SIZE];
 int pcounter = 0;
 
-csv_obj data[CSIZE];
-//int dcounter = 0;
+csv_obj c_data[CSIZE];
+//data_array c_data;
+int dcounter = 0;
 
 
 typedef struct {
@@ -1268,6 +1268,7 @@ propertynotify(XEvent *e)
 void
 quit(const Arg *arg)
 {
+	
 	running = 0;
 }
 
@@ -1410,13 +1411,9 @@ run(void)
 		if(p == NULL) {
 			// do nothing	
 		} else {
-			//printf("opened file\n");
 			getline(&l, &s, p);
-			//printf("%s: %d\n", l, strlen(l));
 			fclose(p);
 			remove(FPATH);
-			//char **cmd[] = {l, NULL};
-			//spawn(cmd);
 			pid_obj n = start_proc(l);
 			if(n.id == 0) {
 				execvp(l, NULL);
@@ -1434,17 +1431,18 @@ run(void)
 			if(pid_array[i].id != 0) {
 				int s;
 				int p = waitpid(pid_array[i].id, &s, WNOHANG);
-				//printf("Pid: %d - %d\n", pid_array[i].id, p);
 				if(p == -1) {
-					stop_obj(pid_array[i]);
+					stop_obj(pid_array[i], c_data, dcounter);
 					pid_array[i].id = NULL;
 				}
 			}
 			
 		}
+			
 		
 		
 	}
+	
 }
 
 void
@@ -2205,6 +2203,8 @@ zoom(const Arg *arg)
 int
 main(int argc, char *argv[])
 {
+
+		
 	if (argc == 2 && !strcmp("-v", argv[1]))
 		die("dwm-"VERSION);
 	else if (argc != 1)
@@ -2222,6 +2222,8 @@ main(int argc, char *argv[])
 	scan();
 	run();
 	cleanup();
+	
 	XCloseDisplay(dpy);
+	
 	return EXIT_SUCCESS;
 }

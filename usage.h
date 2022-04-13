@@ -1,7 +1,8 @@
 #define FPATH  "/home/gareth/usage_reporter/pr"
 #define LOG_PATH "/home/gareth/usage_reporter/status.log"
 #define CSV_PATH "/home/gareth/usage_reporter/data.csv"
-#define CSIZE 15
+#define CSIZE 		15
+#define PA_SIZE 	15
 
 typedef struct {
 	pid_t id;
@@ -45,9 +46,11 @@ pid_obj track_existing(int p) {
 
 
 
-void append_obj(data_array d, csv_obj o) {
-	d.array[d.c] = o;
-	d.c++;	
+void append_obj(csv_obj d[], int curr, csv_obj o) {
+	d[curr] = o;
+	//memcpy((void *) &d[curr], (const void *) &o, sizeof(csv_obj));
+	//printf("%s %d\n", d[curr].name, d[curr].time_alive);
+	curr++;
 
 
 }
@@ -61,23 +64,38 @@ csv_obj create_data_object(char *n, int t) {
 
 }
 
-void write_to_csv(pid_obj d) {
-	csv_obj r = create_data_object(d.name, d.e_time - d.s_time);
+void write_to_csv(csv_obj d) {
+	//csv_obj r = create_data_object(d.name, d.e_time - d.s_time);
 	FILE *data;
 	data = fopen(CSV_PATH, "a+");
-	fprintf(data, "%s,%d\n", r.name, r.time_alive);
+	fprintf(data, "%s,%d\n", d.name, d.time_alive);
 	fclose(data);
 
 }
 
-void stop_obj(pid_obj pb) {
+void proc_exists(pid_obj *ar[], char *n, int count) {
+
+	for(int i = 0; i < count; i++) {
+		if(strcmp(ar[i]->name, n) == 0) {
+			printf("Exists\n");
+		}
+
+		//printf("%s\n", ar[i].name);	
+
+	}
+
+}
+
+void stop_obj(pid_obj pb, csv_obj d[], int co) {
 	pb.e_time = time(NULL);
 	// record time
 	FILE *test;
 	test = fopen(LOG_PATH, "a+");
 	fprintf(test, "Process %d (%s) closed, ran for %d\n", pb.id, pb.name, pb.e_time - pb.s_time);
 	fclose(test);
-	write_to_csv(pb);
+	csv_obj c = create_data_object(pb.name, pb.e_time - pb.s_time);
+	write_to_csv(c);
+	//append_obj(d, co, c);
 
 
 

@@ -1,15 +1,20 @@
 # dwm-metrics 
 
-dwm window manager with program usage metrics.
+dwm window manager with program usage metrics.  Data is recorded as a CSV
 
-## Layout
+## How it works
 
-- generate output as CSV
-	- create struct to load CSV file at desktop start
-	- edit values in memory, save after edit (keep in memory)
-- when dmenu gets program to launch, write to temp file
-	- dwm reads from temp file, then deletes it (prevents reading of bad data)
+The window manager will generate a CSV with two columns, one for the program name and another for the time is was left running.  When `dmenu` gets program name to launch, it writes the name to a temp file. Once `dwm` reads from temp file, then deletes it (prevents reading of bad data)
+
+## Usage
+
+* Clone both `dwm` and `dmenu`
+	* `git clone https://git.suckless.org/dwm`
+	* `git clone https://git.suckless.org/dmenu`
+* Replace the default `dwm.c` and `dmenu.c` in each folder
+* Edit the three path variables in `usage.h` for your home directory
+* Compile and install both of them (`sudo make clean install`)
 
 ## TODO:
-- generate CSV
 - add functions to reallocate `pid_array` and `data_array`
+- figure out how to combine program names in CSV
