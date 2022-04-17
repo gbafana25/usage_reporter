@@ -15,6 +15,9 @@ The window manager will generate a CSV with two columns, one for the program nam
 * Edit the three path variables in `usage.h` for your home directory
 * Compile and install both of them (`sudo make clean install`)
 
+## Displaying the Data
+
+Since the data is stored in a CSV, it can be read with any spreadsheet viewer.  The python script `combine.py` adds together each entry so that the data can be easily graphed.
+
 ## TODO:
 - add functions to reallocate `pid_array` and `data_array`
-- figure out how to combine program names in CSV

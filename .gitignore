@@ -1,5 +1,5 @@
 status.log
-data.csv
+*.csv
 wm-dev/
 menu-dev/
 *.swp
